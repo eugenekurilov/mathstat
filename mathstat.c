@@ -108,7 +108,7 @@ PHP_FUNCTION(ms_median)
         count += 1;
    } ZEND_HASH_FOREACH_END();
 
-   if (count == 0) {
+   if (count == 0 || number == 0) {
    	RETURN_DOUBLE(0);
    }
  
