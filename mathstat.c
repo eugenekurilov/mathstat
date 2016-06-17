@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author:                                                              |
+  | Author: Eugene Kurilov <eugenekurilov@gmail.com>                     |
   +----------------------------------------------------------------------+
 */
 
@@ -77,7 +77,7 @@ static long calculate(long number)
 }
 
 
-PHP_FUNCTION(factorial) 
+PHP_FUNCTION(ms_factorial) 
 {
    int argc = ZEND_NUM_ARGS();
    long number = 0;
@@ -88,6 +88,28 @@ PHP_FUNCTION(factorial)
 
    number = calculate(number);
 
+   RETURN_LONG(number);
+}
+
+PHP_FUNCTION(ms_median)
+{
+   int argc = ZEND_NUM_ARGS();
+   long number = -1;
+
+   zend_ulong num_idx;
+   zval *array, 
+        *entry;
+   zend_string *str_idx;
+
+   if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
+       RETURN_LONG(number);
+   }
+  
+   ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(array), num_idx, str_idx, entry) {
+
+
+   } ZEND_HASH_FOREACH_END();
+ 
    RETURN_LONG(number);
 }
 
@@ -168,7 +190,7 @@ PHP_MINFO_FUNCTION(mathstat)
 /* }}} */
 
 
-ZEND_BEGIN_ARG_INFO(arginfo_factorial, 0)
+ZEND_BEGIN_ARG_INFO(arginfo_ms_factorial, 0)
 	ZEND_ARG_INFO(0, number)
 ZEND_END_ARG_INFO()
 
@@ -179,7 +201,8 @@ ZEND_END_ARG_INFO()
  */
 const zend_function_entry mathstat_functions[] = {
 	PHP_FE(confirm_mathstat_compiled,	NULL)		/* For testing, remove later. */
-        PHP_FE(factorial, arginfo_factorial)
+        PHP_FE(ms_factorial, 	arginfo_ms_factorial)
+        PHP_FE(ms_median,	NULL)
 	PHP_FE_END	/* Must be the last line in mathstat_functions[] */
 };
 /* }}} */
