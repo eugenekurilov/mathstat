@@ -94,23 +94,27 @@ PHP_FUNCTION(ms_factorial)
 PHP_FUNCTION(ms_median)
 {
    int argc = ZEND_NUM_ARGS();
-   long number = -1;
-
-   zend_ulong num_idx;
+   double number = 0;
+   int count = 0;
+   zend_ulong num_idx = 0;
    zval *array, 
-        *entry;
+        *value;
    zend_string *str_idx;
 
    if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
-       RETURN_LONG(number);
+	RETURN_LONG(number);
    }
   
-   ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(array), num_idx, str_idx, entry) {
-
-
+   ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(array), num_idx, str_idx, value) {
+	number = number + zval_get_double (value);
+        count += 1;
    } ZEND_HASH_FOREACH_END();
+
+   if (count == 0) {
+   	RETURN_DOUBLE(0);
+   }
  
-   RETURN_LONG(number);
+   RETURN_DOUBLE(number/count);
 }
 
 
