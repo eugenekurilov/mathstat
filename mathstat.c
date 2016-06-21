@@ -91,6 +91,49 @@ PHP_FUNCTION(ms_factorial)
    RETURN_LONG(number);
 }
 
+PHP_FUNCTION(ms_minimum)
+{
+   int argc = ZEND_NUM_ARGS();
+   double minimum = ZEND_LONG_MAX, cur_value = 0;
+   zval *array,
+        *value;
+
+   if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
+        RETURN_DOUBLE(minimum);
+   }
+
+   ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(array), value) {
+        cur_value = zval_get_double (value);
+        if(cur_value < minimum) {
+           minimum = cur_value;
+        }
+   } ZEND_HASH_FOREACH_END();
+
+   RETURN_DOUBLE(minimum);
+}
+
+PHP_FUNCTION(ms_maximal)
+{
+   int argc = ZEND_NUM_ARGS();
+   double maximal = ZEND_LONG_MIN, cur_value = 0;
+   zval *array,
+        *value;
+
+   if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
+        RETURN_DOUBLE(maximal);
+   }
+
+   ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(array), value) {
+        cur_value = zval_get_double (value);
+        if(cur_value > maximal) {
+           maximal = cur_value;
+        }
+   } ZEND_HASH_FOREACH_END();
+
+   RETURN_DOUBLE(maximal);
+}
+
+
 PHP_FUNCTION(ms_median)
 {
    int argc = ZEND_NUM_ARGS();
@@ -204,7 +247,9 @@ ZEND_END_ARG_INFO()
 const zend_function_entry mathstat_functions[] = {
 	PHP_FE(confirm_mathstat_compiled,	NULL)		/* For testing, remove later. */
         PHP_FE(ms_factorial, 	arginfo_ms_factorial)
-        PHP_FE(ms_median,	NULL)
+        PHP_FE(ms_median,   NULL)
+	PHP_FE(ms_minimum,  NULL)
+        PHP_FE(ms_maximal,   NULL)
 	PHP_FE_END	/* Must be the last line in mathstat_functions[] */
 };
 /* }}} */
