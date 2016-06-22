@@ -103,6 +103,11 @@ PHP_FUNCTION(ms_minimum)
    }
 
    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(array), value) {
+
+        if (Z_TYPE_P(value) == IS_ARRAY || Z_TYPE_P(value) == IS_OBJECT) {
+      	    continue;
+        }
+
         cur_value = zval_get_double (value);
         if(cur_value < minimum) {
            minimum = cur_value;
@@ -124,6 +129,11 @@ PHP_FUNCTION(ms_maximal)
    }
 
    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(array), value) {
+
+        if (Z_TYPE_P(value) == IS_ARRAY || Z_TYPE_P(value) == IS_OBJECT) {
+            continue;
+        }
+
         cur_value = zval_get_double (value);
         if(cur_value > maximal) {
            maximal = cur_value;
@@ -258,7 +268,7 @@ const zend_function_entry mathstat_functions[] = {
  */
 zend_module_entry mathstat_module_entry = {
 	STANDARD_MODULE_HEADER,
-	"mathstat",
+	"mathstat",  
 	mathstat_functions,
 	PHP_MINIT(mathstat),
 	PHP_MSHUTDOWN(mathstat),
