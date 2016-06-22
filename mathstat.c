@@ -95,11 +95,17 @@ PHP_FUNCTION(ms_minimum)
 {
    int argc = ZEND_NUM_ARGS();
    double minimum = ZEND_LONG_MAX, cur_value = 0;
+   zend_long cnt;
    zval *array,
         *value;
 
    if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
         RETURN_DOUBLE(minimum);
+   }
+
+   cnt = zend_array_count(Z_ARRVAL_P(array));
+   if(!cnt) {
+	RETURN_DOUBLE(0);
    }
 
    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(array), value) {
@@ -121,11 +127,17 @@ PHP_FUNCTION(ms_maximal)
 {
    int argc = ZEND_NUM_ARGS();
    double maximal = ZEND_LONG_MIN, cur_value = 0;
+   zend_long cnt;
    zval *array,
         *value;
 
    if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
         RETURN_DOUBLE(maximal);
+   }
+
+   cnt = zend_array_count(Z_ARRVAL_P(array));
+   if(!cnt) {
+        RETURN_DOUBLE(0);
    }
 
    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(array), value) {
