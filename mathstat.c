@@ -76,9 +76,73 @@ static long calculate(long number)
   }
 }
 
+static HashTable *sort(HashTable *ht)
+{
+   HashTable *result;
+   zval *value;
+
+   ALLOC_HASHTABLE(result);
+   zend_hash_init(result, ht->nNumOfElements, NULL, ZVAL_PTR_DTOR, 0);
+
+   double array[ht->nNumOfElements];
+   int iter = 0;
+
+   //php_printf("size hashtable: %d used %d ", ht->nTableSize, ht->nNumUsed);
+   //php_printf("count: %d ", ht->nNumOfElements);
+ 
+   while ((value = zend_hash_get_current_data(ht)) != NULL) {
+      array[iter] = zval_get_double(value);
+      zend_hash_move_forward(ht);
+      iter+=1;
+   }
+
+   int i,j;
+
+   for(i=0; i < ht->nNumOfElements; i++) {
+     for(j=0; j < ht->nNumOfElements; j++) {
+        if((j+1) < ht->nNumOfElements && array[j+1] < array[j] ) {
+           array[j+1] = array[j+1] + array[j];
+           array[j] = array[j+1] - array[j];
+           array[j+1] = array[j+1] - array[j];   
+        }
+     }
+   }
+   
+   for(i=0;i<ht->nNumOfElements;i++) {
+      zval temp;   
+      ZVAL_LONG(&temp, array[i]);
+      zend_hash_next_index_insert(result, &temp);     
+   }
+
+   return result;
+}
+
+
+PHP_FUNCTION(ms_sort)
+{
+   int argc = ZEND_NUM_ARGS(), key = 0;
+
+   zval *array,
+	*value;
+
+   if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
+        RETURN_DOUBLE(0);
+   }
+   
+   HashTable *ht = sort(Z_ARRVAL_P(array));
+   array_init(return_value);
+
+   while ((value = zend_hash_get_current_data(ht)) != NULL) {
+      add_index_long(return_value, key,  zval_get_double(value)); 
+      zend_hash_move_forward(ht);
+      key += 1;
+   }
+}
 
 PHP_FUNCTION(ms_factorial) 
 {
+   //php_printf("sdasdas");	
+
    int argc = ZEND_NUM_ARGS();
    long number = 0;
 
@@ -272,6 +336,7 @@ const zend_function_entry mathstat_functions[] = {
         PHP_FE(ms_median,   NULL)
 	PHP_FE(ms_minimum,  NULL)
         PHP_FE(ms_maximal,   NULL)
+        PHP_FE(ms_sort, NULL)
 	PHP_FE_END	/* Must be the last line in mathstat_functions[] */
 };
 /* }}} */
