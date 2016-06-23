@@ -80,11 +80,12 @@ static HashTable *sort(HashTable *ht)
 {
    HashTable *result;
    zval *value;
+   uint32_t nNumOfElements = ht->nNumOfElements;
 
    ALLOC_HASHTABLE(result);
-   zend_hash_init(result, ht->nNumOfElements, NULL, ZVAL_PTR_DTOR, 0);
+   zend_hash_init(result, nNumOfElements, NULL, ZVAL_PTR_DTOR, 0);
 
-   double array[ht->nNumOfElements];
+   double array[nNumOfElements];
    int iter = 0;
 
    //php_printf("size hashtable: %d used %d ", ht->nTableSize, ht->nNumUsed);
@@ -96,11 +97,13 @@ static HashTable *sort(HashTable *ht)
       iter+=1;
    }
 
+
+   /* bubble sort  */
    int i,j;
 
-   for(i=0; i < ht->nNumOfElements; i++) {
-     for(j=0; j < ht->nNumOfElements; j++) {
-        if((j+1) < ht->nNumOfElements && array[j+1] < array[j] ) {
+   for(i=0; i < nNumOfElements; i++) {
+     for(j=0; j < nNumOfElements; j++) {
+        if((j+1) < nNumOfElements && array[j+1] < array[j] ) {
            array[j+1] = array[j+1] + array[j];
            array[j] = array[j+1] - array[j];
            array[j+1] = array[j+1] - array[j];   
@@ -108,7 +111,7 @@ static HashTable *sort(HashTable *ht)
      }
    }
    
-   for(i=0;i<ht->nNumOfElements;i++) {
+   for(i=0; i < nNumOfElements; i++) {
       zval temp;   
       ZVAL_LONG(&temp, array[i]);
       zend_hash_next_index_insert(result, &temp);     
