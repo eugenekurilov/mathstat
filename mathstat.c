@@ -265,7 +265,8 @@ static HashTable *unique(HashTable *ht)
    int iter = 0, i = 0, exists = 0; 
   
    while ((value = zend_hash_get_current_data(ht)) != NULL) {
- 
+
+      exists = 0; 
       dvalue = zval_get_double(value);
 
       for(i = 0; i < ht->nNumUsed; i++) {
@@ -284,8 +285,6 @@ static HashTable *unique(HashTable *ht)
 
       zend_hash_move_forward(ht);
       iter += 1;
-
-      exists = 0;
    }
   
    free(array);
