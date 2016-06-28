@@ -247,13 +247,31 @@ PHP_FUNCTION(ms_median)
    RETURN_DOUBLE(total/count);
 }
 
+static HashTable *unique(HashTable *ht)
+{
+  if(ht->nNumOfElements <= 1) {
+    return ht;
+  }
+}
+
 PHP_FUNCTION(ms_unique) 
 {
-   int argc = ZEND_NUM_ARGS();
-   zval *array;
+   int argc = ZEND_NUM_ARGS(), key = 0;
+
+   zval *array,
+	*value;
 
    if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
-	RETURN_DOUBLE(0);
+        RETURN_FALSE;
+   }
+
+   HashTable *ht = unique(Z_ARRVAL_P(array));
+   array_init(return_value);
+
+   while ((value = zend_hash_get_current_data(ht)) != NULL) {
+      add_index_long(return_value, key,  zval_get_double(value)); 
+      zend_hash_move_forward(ht);
+      key += 1;
    }
 
 }
