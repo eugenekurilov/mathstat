@@ -249,9 +249,50 @@ PHP_FUNCTION(ms_median)
 
 static HashTable *unique(HashTable *ht)
 {
-  if(ht->nNumOfElements <= 1) {
-    return ht;
-  }
+   zval *value;
+   double dvalue;
+
+   if(ht->nNumOfElements <= 1) {
+      return ht;
+   }
+
+   HashTable *result;
+   ALLOC_HASHTABLE(result);
+   zend_hash_init(result, ht->nNumOfElements, NULL, ZVAL_PTR_DTOR, 0);
+
+   double *array = malloc(ht->nNumOfElements*sizeof(double)); 
+
+   int iter = 0, i = 0, exists = 0; 
+  
+   while ((value = zend_hash_get_current_data(ht)) != NULL) {
+ 
+      dvalue = zval_get_double(value);
+
+      for(i = 0; i < ht->nNumUsed; i++) {
+        if(array[i] == dvalue) {
+          exists = 1;
+        }
+      }
+
+      array[iter] = dvalue;
+   
+      if(!exists) {
+      	zval temp;
+      	ZVAL_LONG(&temp, dvalue);
+      	zend_hash_next_index_insert(result, &temp); 
+      } 
+
+      zend_hash_move_forward(ht);
+      iter += 1;
+
+      exists = 0;
+   }
+  
+   free(array);
+
+   zend_hash_internal_pointer_reset(ht);
+
+   return result;
 }
 
 PHP_FUNCTION(ms_unique) 
