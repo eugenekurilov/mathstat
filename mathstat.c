@@ -129,7 +129,7 @@ PHP_FUNCTION(ms_sort)
 	*value;
 
    if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
-        RETURN_DOUBLE(0);
+        RETURN_FALSE;
    }
    
    HashTable *ht = sort(Z_ARRVAL_P(array));
@@ -247,6 +247,16 @@ PHP_FUNCTION(ms_median)
    RETURN_DOUBLE(total/count);
 }
 
+PHP_FUNCTION(ms_unique) 
+{
+   int argc = ZEND_NUM_ARGS();
+   zval *array;
+
+   if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
+	RETURN_DOUBLE(0);
+   }
+
+}
 
 /* The previous line is meant for vim and emacs, so it can correctly fold and
    unfold functions in source code. See the corresponding marks just before
@@ -340,6 +350,7 @@ const zend_function_entry mathstat_functions[] = {
 	PHP_FE(ms_minimum,  NULL)
         PHP_FE(ms_maximal,   NULL)
         PHP_FE(ms_sort, NULL)
+        PHP_FE(ms_unique, NULL)
 	PHP_FE_END	/* Must be the last line in mathstat_functions[] */
 };
 /* }}} */
