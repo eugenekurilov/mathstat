@@ -44,29 +44,6 @@ PHP_INI_END()
 */
 /* }}} */
 
-/* Remove the following function when you have successfully modified config.m4
-   so that your module can be compiled into PHP, it exists only for testing
-   purposes. */
-
-/* Every user-visible function in PHP should document itself in the source */
-/* {{{ proto string confirm_mathstat_compiled(string arg)
-   Return a string to confirm that the module is compiled in */
-PHP_FUNCTION(confirm_mathstat_compiled)
-{
-	char *arg = NULL;
-	size_t arg_len, len;
-	zend_string *strg;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &arg, &arg_len) == FAILURE) {
-		return;
-	}
-
-	strg = strpprintf(0, "Congratulations! You have successfully modified ext/%.78s/config.m4. Module %.78s is now compiled into PHP.", "mathstat", arg);
-
-	RETURN_STR(strg);
-}
-/* }}} */
-
 static long calculate(long number) 
 {
   if(number == 0) {
@@ -394,7 +371,6 @@ ZEND_END_ARG_INFO()
  * Every user visible function must have an entry in mathstat_functions[].
  */
 const zend_function_entry mathstat_functions[] = {
-	PHP_FE(confirm_mathstat_compiled,	NULL)		/* For testing, remove later. */
         PHP_FE(ms_factorial, 	arginfo_ms_factorial)
         PHP_FE(ms_median,   NULL)
 	PHP_FE(ms_minimum,  NULL)
