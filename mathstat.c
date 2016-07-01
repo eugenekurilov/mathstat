@@ -232,7 +232,8 @@ PHP_FUNCTION(ms_first_quartile)
 {
    int argc = ZEND_NUM_ARGS();
 
-   zval *array;
+   zval *array,
+        *value;
 
    if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
         RETURN_FALSE;
@@ -240,6 +241,25 @@ PHP_FUNCTION(ms_first_quartile)
 
    HashTable *ht = sort(Z_ARRVAL_P(array));
 
+   if (ht->nNumOfElements == 0) {
+      RETURN_DOUBLE(0);
+   } else if (ht->nNumOfElements >= 1 && ht->nNumOfElements <= 3) {
+      value = zend_hash_get_current_data(ht);
+      RETURN_DOUBLE(zval_get_double(value));
+   }
+  
+   uint32_t nNumOfElements25 = ceil(ht->nNumOfElements*0.25); 
+
+   int cnt = 1;
+   while ((value = zend_hash_get_current_data(ht)) != NULL) {
+      if (cnt == nNumOfElements25) {
+        RETURN_DOUBLE(zval_get_double(value));  
+      }
+      zend_hash_move_forward(ht);
+      cnt += 1;
+   }
+
+   RETURN_DOUBLE(0);
 }
 
 
