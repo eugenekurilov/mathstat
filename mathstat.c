@@ -256,42 +256,34 @@ static HashTable *unique(HashTable *ht)
       return ht;
    }
 
-   HashTable *result;
-   ALLOC_HASHTABLE(result);
-   zend_hash_init(result, ht->nNumOfElements, NULL, ZVAL_PTR_DTOR, 0);
+   double *array = malloc(ht->nNumUsed*sizeof(double)); 
+   zend_string *str_index = NULL;
+   zend_ulong num_index;
+   double dbl_value;
 
-   double *array = malloc(ht->nNumOfElements*sizeof(double)); 
-
-   int iter = 0, i = 0, exists = 0; 
-  
+   int cnt = 0, i = 0;
+ 
    while ((value = zend_hash_get_current_data(ht)) != NULL) {
 
-      exists = 0; 
-      dvalue = zval_get_double(value);
-
-      for(i = 0; i < ht->nNumUsed; i++) {
-        if(array[i] == dvalue) {
-          exists = 1;
-        }
+      zend_hash_get_current_key(ht, &str_index, &num_index);
+      if(dbl_value == zval_get_double(value)) {
+         array[cnt] = num_index; 
+         cnt +=1;
+      } else {
+        dbl_value = zval_get_double(value);
       }
 
-      array[iter] = dvalue;
-   
-      if(!exists) {
-      	zval temp;
-      	ZVAL_LONG(&temp, dvalue);
-      	zend_hash_next_index_insert(result, &temp); 
-      } 
-
       zend_hash_move_forward(ht);
-      iter += 1;
    }
-  
+ 
+   for(i = 0; i < cnt; i++) {
+      zend_hash_index_del(ht, array[i]);
+   }
+ 
    free(array);
-
    zend_hash_internal_pointer_reset(ht);
 
-   return result;
+   return ht;
 }
 
 PHP_FUNCTION(ms_unique) 
@@ -305,11 +297,11 @@ PHP_FUNCTION(ms_unique)
         RETURN_FALSE;
    }
 
-   HashTable *ht = unique(Z_ARRVAL_P(array));
+   HashTable *ht = unique(sort(Z_ARRVAL_P(array)));
    array_init(return_value);
 
    while ((value = zend_hash_get_current_data(ht)) != NULL) {
-      add_index_long(return_value, key,  zval_get_double(value)); 
+      add_index_long(return_value, key, zval_get_double(value)); 
       zend_hash_move_forward(ht);
       key += 1;
    }
