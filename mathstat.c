@@ -57,7 +57,11 @@ static HashTable *sort(HashTable *ht)
 {
    HashTable *result;
    zval *value;
+
    uint32_t nNumOfElements = ht->nNumOfElements;
+   if(ht->nNumOfElements <= 1) {
+      return ht;
+   }
 
    ALLOC_HASHTABLE(result);
    zend_hash_init(result, nNumOfElements, NULL, ZVAL_PTR_DTOR, 0);
@@ -224,6 +228,21 @@ PHP_FUNCTION(ms_median)
    RETURN_DOUBLE(total/count);
 }
 
+PHP_FUNCTION(ms_first_quartile) 
+{
+   int argc = ZEND_NUM_ARGS();
+
+   zval *array;
+
+   if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
+        RETURN_FALSE;
+   }
+
+   HashTable *ht = sort(Z_ARRVAL_P(array));
+
+}
+
+
 static HashTable *unique(HashTable *ht)
 {
    zval *value;
@@ -377,6 +396,7 @@ const zend_function_entry mathstat_functions[] = {
         PHP_FE(ms_maximal,   NULL)
         PHP_FE(ms_sort, NULL)
         PHP_FE(ms_unique, NULL)
+        PHP_FE(ms_first_quartile, NULL)
 	PHP_FE_END	/* Must be the last line in mathstat_functions[] */
 };
 /* }}} */
