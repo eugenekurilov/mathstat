@@ -228,6 +228,19 @@ PHP_FUNCTION(ms_median)
    RETURN_DOUBLE(total/count);
 }
 
+PHP_FUNCTION(ms_third_quartile)
+{
+   int argc = ZEND_NUM_ARGS();
+
+   zval *array,
+        *value;
+
+   if (zend_parse_parameters(argc, "a", &array) == FAILURE) {
+        RETURN_FALSE;
+   }
+
+}
+
 PHP_FUNCTION(ms_first_quartile) 
 {
    int argc = ZEND_NUM_ARGS();
@@ -417,6 +430,7 @@ const zend_function_entry mathstat_functions[] = {
         PHP_FE(ms_sort, NULL)
         PHP_FE(ms_unique, NULL)
         PHP_FE(ms_first_quartile, NULL)
+        PHP_FE(ms_third_quartile, NULL)
 	PHP_FE_END	/* Must be the last line in mathstat_functions[] */
 };
 /* }}} */
