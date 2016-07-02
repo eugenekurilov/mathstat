@@ -239,6 +239,17 @@ PHP_FUNCTION(ms_third_quartile)
         RETURN_FALSE;
    }
 
+   HashTable *ht = sort(Z_ARRVAL_P(array));
+   uint32_t cnt = zend_array_count(ht); 
+
+   if (cnt == 0) {
+      RETURN_DOUBLE(0);
+   } else if (cnt >= 1 && cnt <= 3) {
+      //value = zend_hash_get_current_data(ht);
+      //RETURN_DOUBLE(zval_get_double(value));
+   }
+
+
 }
 
 PHP_FUNCTION(ms_first_quartile) 
@@ -253,23 +264,24 @@ PHP_FUNCTION(ms_first_quartile)
    }
 
    HashTable *ht = sort(Z_ARRVAL_P(array));
+   uint32_t cnt = zend_array_count(ht); 
 
-   if (ht->nNumOfElements == 0) {
+   if (cnt == 0) {
       RETURN_DOUBLE(0);
-   } else if (ht->nNumOfElements >= 1 && ht->nNumOfElements <= 3) {
+   } else if (cnt >= 1 && cnt <= 3) {
       value = zend_hash_get_current_data(ht);
       RETURN_DOUBLE(zval_get_double(value));
    }
   
-   uint32_t nNumOfElements25 = ceil(ht->nNumOfElements*0.25); 
+   uint32_t cnt25 = ceil(cnt*0.25); 
 
-   int cnt = 1;
+   int iter = 1;
    while ((value = zend_hash_get_current_data(ht)) != NULL) {
-      if (cnt == nNumOfElements25) {
+      if (iter == cnt25) {
         RETURN_DOUBLE(zval_get_double(value));  
       }
       zend_hash_move_forward(ht);
-      cnt += 1;
+      iter += 1;
    }
 
    RETURN_DOUBLE(0);
