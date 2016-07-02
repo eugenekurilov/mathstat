@@ -166,6 +166,7 @@ PHP_FUNCTION(ms_minimum)
         if(cur_value < minimum) {
            minimum = cur_value;
         }
+
    } ZEND_HASH_FOREACH_END();
 
    RETURN_DOUBLE(minimum);
@@ -198,6 +199,7 @@ PHP_FUNCTION(ms_maximal)
         if(cur_value > maximal) {
            maximal = cur_value;
         }
+
    } ZEND_HASH_FOREACH_END();
 
    RETURN_DOUBLE(maximal);
@@ -245,11 +247,27 @@ PHP_FUNCTION(ms_third_quartile)
    if (cnt == 0) {
       RETURN_DOUBLE(0);
    } else if (cnt >= 1 && cnt <= 3) {
-      //value = zend_hash_get_current_data(ht);
-      //RETURN_DOUBLE(zval_get_double(value));
+ 
+      zend_string *string_key;
+      zend_ulong num_key;
+ 
+      ZEND_HASH_REVERSE_FOREACH_KEY_VAL(ht, num_key, string_key, value) {
+         RETURN_DOUBLE(zval_get_double(value));
+      } ZEND_HASH_FOREACH_END(); 
    }
 
+   uint32_t cnt75 = ceil(cnt*0.75); 
 
+   int iter = 1;
+   while ((value = zend_hash_get_current_data(ht)) != NULL) {
+      if (iter == cnt75) {
+        RETURN_DOUBLE(zval_get_double(value));  
+      }
+      zend_hash_move_forward(ht);
+      iter += 1;
+   }
+
+   RETURN_DOUBLE(0);
 }
 
 PHP_FUNCTION(ms_first_quartile) 
