@@ -26,7 +26,7 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_mathstat.h"
-
+//#include <curses.h>
 /* If you declare any globals in php_mathstat.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(mathstat)
 */
@@ -48,9 +48,9 @@ static long calculate(long number)
 {
   if(number == 0) {
     return 1;
-  } else {
-    return number * calculate(number - 1);
   }
+
+  return number * calculate(number - 1);
 }
 
 static HashTable *sort(HashTable *ht)
@@ -125,7 +125,11 @@ PHP_FUNCTION(ms_sort)
 
 PHP_FUNCTION(ms_factorial) 
 {
-   //php_printf("sdasdas");	
+   //initscr();
+   //raw();
+   //printw("test");
+   //getch();
+   //endwin();   
 
    int argc = ZEND_NUM_ARGS();
    long number = 0;
@@ -162,7 +166,7 @@ PHP_FUNCTION(ms_minimum)
       	    continue;
         }
 
-        cur_value = zval_get_double (value);
+        cur_value = zval_get_double(value);
         if(cur_value < minimum) {
            minimum = cur_value;
         }
@@ -195,7 +199,7 @@ PHP_FUNCTION(ms_maximal)
             continue;
         }
 
-        cur_value = zval_get_double (value);
+        cur_value = zval_get_double(value);
         if(cur_value > maximal) {
            maximal = cur_value;
         }
